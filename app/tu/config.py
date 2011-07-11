@@ -4,9 +4,6 @@
     ~~~~~~~~~~~~~~~
 
     Basic configuration
-
-    :copyright: 2011 by damn.dk
-    :license: public domain
 """
 
 DIRTY_WORDS_RE = 'fuck|hitler|nazi|kusse|fisse|penis|vagina'
