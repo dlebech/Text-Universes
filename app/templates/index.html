@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Text Universes</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+	<script type="text/javascript" src="/static/js/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="/static/js/tu.js"></script>
+	<script type="text/javascript" src="/static/js/login.js"></script>
+	<script type="text/javascript">
+        set_universe("{{ universe }}");
+	</script>	
+    <script type="text/javascript">
+    
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-18144552-4']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    
+    </script>
+</head>
+<body>
+<div id="texts"></div>
+<div id="container" style="display:none">
+	<a id="menu_toggle" href="#" onclick="toggle_menu(); return false;">hide menu</a>
+	<div id="menu">
+        <h1>Welcome to Text Universes</h1>
+		<div id="intro">
+			Click anywhere on the screen to start navigating the universe or add some text below.<br />
+			<a href="#" onclick="toggle_about(); return false;">Read more</a>
+		</div>
+
+		<!-- Login area, fetched via jquery -->
+		<h1 style="display: none;">Login</h1>
+		<div id="login" style="display:none;"></div>
+
+		<!-- Text sharing area, fetched via jquery -->
+		<h2>Share something</h2>
+		<div id="text_submit"></div>
+		<h2>Status</h2>
+		<div id="status"></div>
+	</div>
+</div>
+<div id="about" style="display:none;">
+	<h1>About Text Universes</h1>
+    <h2>How to use</h2>
+	    <p>
+	    	Click and drag anywhere on the screen to navigate around in the universe.
+    	</p>
+        <p>
+            To start your own text universe, simply type in the name in the address bar. For example: /mycooluniverse. To add to the main universe, use /main.
+        </p>
+        <p>
+            You can either type in text yourself or make a Twitter search on keywords (there's a button for each of those). With Twitter search, the latest Twitter results for the given keywords are automatically added to the universe.
+        </p>
+    <h2>Future</h2>
+    	<p>
+	    	The goal of Text Universes is to have a Text Mining algorithm cluster similar pieces of text together but this is not implemented yet.
+    	</p>
+        <p>
+            Other than that, there are several other features which could be fun to have. But Text Mining is the core idea so it's rather strange it hasn't been done yet, right?
+        </p>
+    <h2>People</h2>
+        <p>
+        <a href="http://davidlebech.dk" target="_blank">David</a> originally created Text Universes with a different vision 
+        (and a business idea) but it has since been opened up to his fellow gang members at damn.dk: 
+        <a href="http://www.linkedin.com/in/andreasschmidtjensen" target="_blank">Andreas</a>, 
+        <a href="http://www.linkedin.com/in/thomassenmichael" target="_blank">Michael</a> 
+        and <a href="http://www.linkedin.com/pub/niklas-boss/7/346/652" target="_blank">Niklas</a>.
+        </p>
+        <p>
+            It will probably be completely open sourced pretty soon. Stay tuned.
+        </p>
+    <h2>Background</h2>
+	<p>
+    <em>Text Universes</em> is inspired by <a href="http://yourworldoftext.com" target="_blank">your world of text</a>. 
+        Text Universes is not a remake of this idea but a personal hobby experiment. You can still share any piece of text 
+        but Text Universes gives you slightly less freedom since you cannot choose where to put your text in the universe.
+	</p>
+	<p><a href="#" onclick="toggle_about(); return false;">Hide this box</a></p>
+</div>
+<div id="user_texts" style="display:none;"></div>
+<div id="overlay" style="display:none"><center>While clicked, drag the mouse to navigate</center></div>
+</body>
+</html>

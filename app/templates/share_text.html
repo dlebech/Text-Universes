@@ -1,0 +1,11 @@
+<form method="post">
+	<div>
+		<textarea id="sharetext" name="sharetext" cols="25" rows="4"></textarea>
+	</div>
+	<div>
+		What is the <b>fourth</b> word in this sentence? The answer is written in bold.<br />
+		<input id="shareanswer" name="shareanswer" type="text" />
+	</div>
+	<input type="submit" onclick="share_text(); return false;" value="Send text" />
+	<input type="submit" onclick="fetch_twitter(); return false;" value="Twitter search" />	
+</form>
