@@ -1,0 +1,11 @@
+*.pyc
+*.swp
+bin/
+eggs/
+var/
+babel.cfg
+bootstrap.py
+buildout.cfg
+gaetools.cfg
+README.txt
+versions.cfg
