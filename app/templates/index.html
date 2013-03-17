@@ -3,26 +3,12 @@
 <head>
 	<title>Text Universes</title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" type="text/css" href="/static/css/main.css" />
-	<script type="text/javascript" src="/static/js/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="/static/js/tu.js"></script>
-	<script type="text/javascript" src="/static/js/login.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/main.css" />
+	<script type="text/javascript" src="/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/js/tu.js"></script>
 	<script type="text/javascript">
         set_universe("{{ universe }}");
 	</script>	
-    <script type="text/javascript">
-    
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-18144552-4']);
-      _gaq.push(['_trackPageview']);
-    
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    
-    </script>
 </head>
 <body>
 <div id="texts"></div>
@@ -84,7 +70,19 @@
 	</p>
 	<p><a href="#" onclick="toggle_about(); return false;">Hide this box</a></p>
 </div>
-<div id="user_texts" style="display:none;"></div>
-<div id="overlay" style="display:none"><center>While clicked, drag the mouse to navigate</center></div>
+<div id="overlay"></div>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-18144552-4']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
 </body>
 </html>

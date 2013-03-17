@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 """URL definitions."""
-from tipfy.routing import Rule, HandlerPrefix, BaseConverter
+from webapp2 import Route
+from webapp2_extras import routes
 
-rules = [
-    Rule('/', name='index', redirect_to= '/main'),
-    Rule('/<string:universe>/', name='index', handler='tu.site.IndexHandler'),
-    Rule('/<string:universe>/login', 'site-login', handler='tu.site.LoginHandler'),
-    HandlerPrefix('tu.text.', [
-        Rule('/<string:universe>/text/all', 'texts-all', handler='AllTextsHandler'),
-        Rule('/<string:universe>/text/mine', 'texts-mine', handler='MyTextsHandler'),
-        Rule('/<string:universe>/text/share', 'text-share', handler='ShareHandler'),
-        Rule('/<string:universe>/text/twitter','text-twitter', handler='TwitterHandler'),
-    ]),
+routes = [
+    routes.RedirectRoute('/', name='index', redirect_to='/main'),
+    routes.RedirectRoute('/<universe:\w+>', 
+        name='universe-index', 
+        handler='tu.site.IndexHandler',
+        strict_slash=True),
+    routes.PathPrefixRoute('/<universe:\w+>', [
+        Route('/text/all', name='texts-all', handler='tu.text.AllTextsHandler'),
+        Route('/text/share', name='text-share', handler='tu.text.ShareHandler'),
+        Route('/text/twitter',name='text-twitter', handler='tu.text.TwitterHandler')
+    ])
 ]

@@ -17,8 +17,11 @@ var updatePixels = 200;
 
 var universe = '';
 
+// Determines whether or not the view is currently updating.
+var updating = false;
+
 function set_universe(uni) {
-	universe = uni;
+    universe = uni;
 }
 
 
@@ -27,78 +30,57 @@ function set_universe(uni) {
  * Parses the JSON object to show the texts on screen.
  */
 function get_texts() {
-	$.post(
-		'text/all',
-		{ x: userPos.x, y: userPos.y, w: dim.width, h: dim.height, universe: universe },
-		function(data) {
-			texts = jQuery.parseJSON(data);
-			show_texts();
-		},
-        'json'
-	);
-}
-
-/**
- * Retrieves user texts from the database as html.
- */
-function get_user_texts() {
-	$.post(
-		'text/mine',
-		{ universe: universe },
-		function(data) {
-			if ($("#user_texts").is(":visible")) {
-				$("#user_texts").hide();
-				$("#user_texts").html(data);
-				$("#user_texts").fadeIn();
-			}
-			else {
-				$("#user_texts").html(data);
-			}
-		},
-        'html'
-	);
+    updating = true;
+    $.get(
+            '/' + universe + '/text/all',
+            { x: userPos.x, y: userPos.y, w: dim.width, h: dim.height, universe: universe },
+            function(data) {
+                texts = data;
+                show_texts();
+                updating = false;
+            },
+            'json'
+         );
 }
 
 /**
  * Adds some text to the universe
  */
 function share_text() {
-	var thetext = $("#sharetext").val();
-	var theanswer = $("#shareanswer").val();
-	$.post(
-		'text/share',
-		{ text: thetext, answer: theanswer, universe: universe },
-		function(data) {
-			if (data.length > 0) {
-				$("#text_submit").hide();
-				$("#text_submit").html(data);
-				$("#text_submit").fadeIn();
-			}
-			//get_user_texts();
-			get_texts();
-		},
-        'html'
-	);
+    var thetext = $("#sharetext").val();
+    var theanswer = $("#shareanswer").val();
+    $.post(
+            '/' + universe + '/text/share',
+            { text: thetext, answer: theanswer, universe: universe },
+            function(data) {
+                if (data.length > 0) {
+                    $("#text_submit").hide();
+                    $("#text_submit").html(data);
+                    $("#text_submit").fadeIn();
+                }
+                get_texts();
+            },
+            'html'
+          );
     _gaq.push(['_trackEvent', 'Text', 'Share', '', thetext.length]);
 }
 
 function fetch_twitter() {
-	var thetext = $("#sharetext").val();
-	var theanswer = $("#shareanswer").val();
-	$.post(
-		'text/twitter',
-		{ text: thetext, answer: theanswer, universe: universe },
-		function(data) {
-			if (data.length > 0) {
-				$("#text_submit").hide();
-				$("#text_submit").html(data);
-				$("#text_submit").fadeIn();
-			}
-			//get_user_texts();
-			get_texts();
-		},
-        'html'
-	);
+    var thetext = $("#sharetext").val();
+    var theanswer = $("#shareanswer").val();
+    $.post(
+            '/' + universe + '/text/twitter',
+            { text: thetext, answer: theanswer, universe: universe },
+            function(data) {
+                if (data.length > 0) {
+                    $("#text_submit").hide();
+                    $("#text_submit").html(data);
+                    $("#text_submit").fadeIn();
+                }
+                get_texts();
+            },
+            'html'
+          );
     _gaq.push(['_trackEvent', 'Text', 'TwitterSearch', '', thetext.length]);
 }
 
@@ -106,171 +88,133 @@ function fetch_twitter() {
  * Constructs the html for showing texts.
  */
 function show_texts() {
-	var res = [];
+    var res = [];
 
-	// Fetch texts div and clear its contents.
-	var textsobj = $('#texts');
-	textsobj.html('');
+    // Fetch texts div and clear its contents.
+    var textsobj = $('#texts');
+    textsobj.html('');
 
-	// Construct a div for each text
-	for (i in texts) {
-		res.push(
-			'<div id="text' + i + '" class="atext"',
-			' style="top:' + calc_top_style(texts[i].y) + 'px;',
-			'left:' + calc_left_style(texts[i].x) + 'px">',
-			texts[i].txt,
-			'</div>'
-		);
-		textsobj.append(res.join(''));
-		res = [];
-		/*
-		if ($('#text' + i).height() >= 50) {
-			res.push(
-				'<span class="more">',
-				'+',
-				'</span>'
-			);
-			$('#text' + i).append(res.join(''));
-			res = [];
-		}
-		*/
-	}
+    // Construct a div for each text
+    for (i in texts) {
+        res.push(
+                '<div id="text' + i + '" class="atext"',
+                ' style="top:' + calc_top_style(texts[i].y) + 'px;',
+                'left:' + calc_left_style(texts[i].x) + 'px">',
+                texts[i].txt,
+                '</div>'
+                );
+        textsobj.append(res.join(''));
+        res = [];
+    }
 }
 
 function calc_top_style(y) {
-	return parseInt(y)-userPos.y;
+    return parseInt(y)-userPos.y;
 }
 
 function calc_left_style(x) {
-	return parseInt(x)-userPos.x;
+    return parseInt(x)-userPos.x;
 }
 
 
 function update_positions(e) {
-	if (mouse.pressed) {
-		difX = e.clientX-mouse.x
-		difY = e.clientY-mouse.y
-		userPos.x -= difX;
-		userPos.y -= difY;
-		for (i in texts) {
-			var dd = $('#text'+i);
-			var absDivOffset = $(dd).offset();
-			$(dd).css('top', absDivOffset.top + difY);
-			$(dd).css('left', absDivOffset.left + difX);
-		}
-		mouse.x = e.clientX;
-		mouse.y = e.clientY;
-		update_status();
-		update_texts();
-	}
+    if (mouse.pressed && !updating) {
+        updating = true;
+        difX = e.clientX-mouse.x;
+        difY = e.clientY-mouse.y;
+        userPos.x -= difX;
+        userPos.y -= difY;
+        for (i in texts) {
+            var dd = $('#text'+i);
+            var absDivOffset = $(dd).offset();
+            $(dd).css('top', absDivOffset.top + difY);
+            $(dd).css('left', absDivOffset.left + difX);
+        }
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        update_status();
+        updating = false;
+    }
 }
 
 function update_status() {
-	$("#status").html('Position of origin: ' + userPos.x + ',' + userPos.y);
+    $("#status").html('Position of origin: ' + userPos.x + ',' + userPos.y);
 }
 
 function update_texts() {
-	// Only fetch texts when the screen has been dragged sufficiently.
-	update = false;
-	if (Math.abs(userPos.x-userPos.lastUpdateX) > updatePixels) {
-		update = true;
-		userPos.lastUpdateX = userPos.x;
-	}
+    // Only fetch texts when the screen has been dragged sufficiently.
+    update = false;
+    if (Math.abs(userPos.x-userPos.lastUpdateX) > updatePixels) {
+        update = true;
+        userPos.lastUpdateX = userPos.x;
+    }
 
-	if (Math.abs(userPos.y-userPos.lastUpdateY) > updatePixels) {
-		update = true;
-		userPos.lastUpdateY = userPos.y;
-	}
+    if (!update && Math.abs(userPos.y-userPos.lastUpdateY) > updatePixels) {
+        update = true;
+        userPos.lastUpdateY = userPos.y;
+    }
 
-	if (update)
-		get_texts();
+    if (update)
+        get_texts();
 }
 
 function toggle_menu() {
-	if ($("#menu").is(":visible")) {
-		$("#menu").slideUp();
-		$("#menu_toggle").html('show menu');
-	}
-	else {
-		$("#menu").slideDown();
-		$("#menu_toggle").html('hide menu');
-	}
+    if ($("#menu").is(":visible")) {
+        $("#menu").slideUp();
+        $("#menu_toggle").html('show menu');
+    }
+    else {
+        $("#menu").slideDown();
+        $("#menu_toggle").html('hide menu');
+    }
 }
 
 function toggle_about() {
-	if ($("#about").is(":visible")) {
-		$("#about").fadeOut();
-	}
-	else {
-		$("#user_texts").fadeOut();
-		$("#about").fadeIn();
-	}
-}
-
-function toggle_user_texts() {
-	if ($("#user_texts").is(":visible")) {
-		$("#user_texts").fadeOut();
-	}
-	else {
-		$("#about").fadeOut();
-		get_user_texts();
-		$("#user_texts").fadeIn();
-	}
-}
-
-/**
- * Updates the login html area
- */
-function login_html() {
-	$.get(
-		"login",
-		{},
-		function(data) {
-			if (data.length > 0)
-				$("#login").html(data);
-		},
-        'html'
-	);
+    if ($("#about").is(":visible")) {
+        $("#about").fadeOut();
+    }
+    else {
+        $("#user_texts").fadeOut();
+        $("#about").fadeIn();
+    }
 }
 
 /**
  * Updates the area where text sharing is possible
  */
 function share_text_html() {
-	$.get(
-		'text/share',
-		{},
-		function(data) {
-			if (data.length > 0) {
-				$("#text_submit").hide();
-				$("#text_submit").html(data);
-				$("#text_submit").fadeIn();
-			}
-		},
-        'html'
-	);
+    $.get(
+            '/' + universe + '/text/share',
+            {},
+            function(data) {
+                if (data.length > 0) {
+                    $("#text_submit").hide();
+                    $("#text_submit").html(data);
+                    $("#text_submit").fadeIn();
+                }
+            },
+            'html'
+         );
 }
 
 $(document).ready(function() { 
-	$("#container").fadeIn();
-	login_html();
-	share_text_html();
-	get_texts();
+    $("#container").fadeIn();
+    share_text_html();
+    get_texts();
 
-	$("#texts").mousedown(function(e) {
-		$("#overlay").show();
-		mouse.x = e.clientX;
-		mouse.y = e.clientY;
-		mouse.pressed = true;
-	});
+    $("#overlay").mousedown(function(e) {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.pressed = true;
+    });
 
+    setInterval(function() { update_texts(); }, 500);
 }); 
 
 $(document).mousemove(function(e) {
-	update_positions(e);
+    update_positions(e);
 });
 
 $(document).mouseup(function(e) {
-	mouse.pressed = false;
-	$("#overlay").hide();
+    mouse.pressed = false;
 });
